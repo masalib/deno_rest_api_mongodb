@@ -2,28 +2,16 @@ import { v4 } from "https://deno.land/std/uuid/mod.ts";
 import { config } from "https://deno.land/x/dotenv/mod.ts";
 import { MongoClient } from "https://deno.land/x/mongo@v0.7.0/mod.ts";
 import { Product } from '../types.ts'
+import  mongodb  from '../mongodb.ts'
 
-const ENV_PATH = '.env';//deno runしたところをカレントディレクトリになるみたい
-const config_env:any = config({ path: ENV_PATH });
-
-const user:string = config_env.mongo_user
-const password_data:string = config_env.mongo_password
-const host:string = config_env.mongo_host
-const port_num:number = config_env.mongo_port
-const db_name:string = config_env.mongo_db
-//mongodb://<dbuser>:<dbpassword>@<host>:<port>/<db>
-const url:string = 'mongodb://' + user + ':' + password_data + '@' + host + ':' + port_num + '/' + db_name
-
-//mongoDB接続
-console.log("mongodb connection start")
-const client = new MongoClient()
-client.connectWithUri(url)
 
 //DBの設定
-const db = client.database(db_name)
+const db = mongodb
 
 //コレクションの設定
-const collection_name:string = config_env.mongo_collection
+const ENV_PATH = '.env';//deno runしたところをカレントディレクトリになるみたい
+const config_env:any = config({ path: ENV_PATH });
+const collection_name:string = config_env.mongo_products_collection
 const datas = db.collection(collection_name)
 
 
@@ -144,7 +132,6 @@ const addProduct = async ({ request, response }: { request: any , response: any 
 // @route   PUT /api/v1/products/:id
 const updateProduct = async({ params, request, response }: { params: { id: string }, request: any, response: any }) => {
   //console.log("params.id:"+ params.id)
-  //console.log("updateProduct")
 
   const body = await request.body()
 
